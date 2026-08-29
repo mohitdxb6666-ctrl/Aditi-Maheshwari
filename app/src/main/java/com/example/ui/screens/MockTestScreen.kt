@@ -1,15 +1,11 @@
 package com.example.ui.screens
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,8 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.SubjectType
-import com.example.ui.components.FrostedGlassCard
-import com.example.ui.components.FrostedPillBadge
 import com.example.ui.theme.*
 import com.example.ui.viewmodel.MainViewModel
 import com.example.ui.viewmodel.ScreenDestination
@@ -38,25 +32,14 @@ import com.example.ui.viewmodel.ScreenDestination
 @Composable
 fun MockTestHubScreen(viewModel: MainViewModel) {
     val allTests by viewModel.allTestResults.collectAsState()
-    val isDark = isSystemInDarkTheme()
 
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            "CBSE Exam Mock Tests",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            color = if (isDark) Color.White else Slate900
-                        )
-                        Text(
-                            "Simulate Class 12 Board Pattern with Timers",
-                            fontSize = 11.sp,
-                            color = if (isDark) Slate400 else Slate600
-                        )
+                        Text("CBSE Exam Mock Tests", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Simulate CBSE Class 12 Board Pattern with Timers", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
                 navigationIcon = {
@@ -64,14 +47,10 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
                         onClick = { viewModel.navigateTo(ScreenDestination.Home) },
                         modifier = Modifier.testTag("mock_hub_back_btn")
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = if (isDark) Color.White else Slate900
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
@@ -80,58 +59,48 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
                 .fillMaxSize()
                 .padding(padding)
                 .testTag("mock_test_hub_list"),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header Banner in Frosted Glass
+            // Header Banner
             item {
-                FrostedGlassCard(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    backgroundColor = if (isDark) Color(0x1AFFFFFF) else Color(0xD9FFFFFF),
-                    borderColor = if (isDark) Color(0x33FFFFFF) else Color(0x1F0F172A)
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(18.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Brush.linearGradient(listOf(Navy900, Navy800)))
+                            .padding(18.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(
-                                    Icons.Default.Timer,
-                                    contentDescription = null,
-                                    tint = NeonBlue,
-                                    modifier = Modifier.size(20.dp)
-                                )
+                                Icon(Icons.Default.Timer, contentDescription = null, tint = AccentCyan, modifier = Modifier.size(20.dp))
                                 Text(
-                                    text = "CBSE 2026 Board Pattern",
-                                    color = NeonBlue,
+                                    text = "CBSE 2026 Board Exam Pattern",
+                                    color = AccentCyan,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
-                            FrostedPillBadge(text = "OFFLINE READY", accentColor = NeonEmerald)
+                            Text(
+                                text = "Practice with Real Exam Conditions",
+                                color = Color.White,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Text(
+                                text = "Includes Section A (MCQs & Assertion-Reason), negative mark prevention, and instant answer evaluations.",
+                                color = Color(0xFFCBD5E1),
+                                fontSize = 12.sp,
+                                lineHeight = 17.sp
+                            )
                         }
-
-                        Text(
-                            text = "Practice with Real Exam Conditions",
-                            color = if (isDark) Color.White else Slate900,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                        Text(
-                            text = "Includes Section A (MCQs & Assertion-Reason), negative mark prevention, and instant answer evaluations.",
-                            color = if (isDark) Slate300 else Slate600,
-                            fontSize = 12.sp,
-                            lineHeight = 17.sp
-                        )
                     }
                 }
             }
@@ -139,9 +108,8 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
             item {
                 Text(
                     text = "Select Mock Test",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (isDark) Color.White else Slate900
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -149,13 +117,13 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
             itemsIndexed(SubjectType.values().toList()) { _, subject ->
                 val subjectColor = Color(subject.colorHex)
 
-                FrostedGlassCard(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag("mock_card_${subject.code.lowercase()}"),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF),
-                    borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -167,40 +135,44 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(42.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(subjectColor.copy(alpha = 0.2f))
-                                        .border(BorderStroke(1.dp, subjectColor.copy(alpha = 0.4f)), RoundedCornerShape(12.dp)),
-                                    contentAlignment = Alignment.Center
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = subjectColor.copy(alpha = 0.15f),
+                                    modifier = Modifier.size(36.dp)
                                 ) {
-                                    Text(
-                                        subject.code,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = subjectColor,
-                                        fontSize = 12.sp
-                                    )
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(subject.code, fontWeight = FontWeight.Bold, color = subjectColor, fontSize = 12.sp)
+                                    }
                                 }
                                 Column {
                                     Text(
                                         text = "${subject.displayName} Board Mock",
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = if (isDark) Color.White else Slate900
+                                        fontSize = 15.sp
                                     )
                                     Text(
                                         text = "Full Syllabus Chapter Mix",
-                                        fontSize = 11.sp,
-                                        color = if (isDark) Slate400 else Slate600
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
 
-                            FrostedPillBadge(text = "30 MINS", accentColor = NeonAmber)
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = AccentAmber.copy(alpha = 0.15f)
+                            ) {
+                                Text(
+                                    text = "30 Mins",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = AccentAmber,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
                         }
 
                         Row(
@@ -212,10 +184,10 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
                                     viewModel.startMockTest(subject.code, 30, "${subject.displayName} 30-Min Drill")
                                 },
                                 modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(10.dp),
                                 colors = ButtonDefaults.buttonColors(containerColor = subjectColor)
                             ) {
-                                Text("30-Min Drill", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("Start 30-Min Drill", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
 
                             OutlinedButton(
@@ -223,14 +195,9 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
                                     viewModel.startMockTest(subject.code, 60, "${subject.displayName} 1-Hour Full Mock")
                                 },
                                 modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(12.dp),
-                                border = BorderStroke(1.dp, if (isDark) Color(0x33FFFFFF) else Color(0x330F172A))
+                                shape = RoundedCornerShape(10.dp)
                             ) {
-                                Text(
-                                    "60-Min Mock",
-                                    fontSize = 12.sp,
-                                    color = if (isDark) Color.White else Slate900
-                                )
+                                Text("Start 60-Min Mock", fontSize = 12.sp)
                             }
                         }
                     }
@@ -241,33 +208,25 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
             item {
                 Text(
                     text = "Recent Mock Test History",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (isDark) Color.White else Slate900
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
             if (allTests.isEmpty()) {
                 item {
-                    FrostedGlassCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Text(
-                            text = "No mock tests recorded yet. Take your first test above!",
-                            color = if (isDark) Slate400 else Slate600,
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
+                    Text(
+                        text = "No mock tests recorded yet. Take your first test above!",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 13.sp
+                    )
                 }
             } else {
                 itemsIndexed(allTests) { _, test ->
-                    FrostedGlassCard(
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        backgroundColor = if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF),
-                        borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         Row(
                             modifier = Modifier
@@ -277,22 +236,25 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text(
-                                    test.testTitle,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    color = if (isDark) Color.White else Slate900
-                                )
+                                Text(test.testTitle, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                                 Text(
                                     text = "Score: ${test.scoreMarks}/${test.maxMarks} • Correct: ${test.correctAnswers}/${test.totalQuestions}",
-                                    fontSize = 11.sp,
-                                    color = if (isDark) Slate400 else Slate600
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            FrostedPillBadge(
-                                text = "${test.accuracyPercentage}%",
-                                accentColor = if (test.accuracyPercentage >= 75) NeonEmerald else NeonAmber
-                            )
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (test.accuracyPercentage >= 75) AccentEmerald.copy(alpha = 0.2f) else AccentAmber.copy(alpha = 0.2f)
+                            ) {
+                                Text(
+                                    text = "${test.accuracyPercentage}%",
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 13.sp,
+                                    color = if (test.accuracyPercentage >= 75) AccentEmerald else AccentAmber,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -312,7 +274,6 @@ fun ActiveMockTestScreen(
     val questions by viewModel.mockQuestions.collectAsState()
     val answers by viewModel.mockAnswers.collectAsState()
     val secondsLeft by viewModel.mockTimeRemainingSeconds.collectAsState()
-    val isDark = isSystemInDarkTheme()
 
     var currentQIndex by remember { mutableIntStateOf(0) }
     var showSubmitConfirmDialog by remember { mutableStateOf(false) }
@@ -325,22 +286,15 @@ fun ActiveMockTestScreen(
     }
 
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            testTitle,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            maxLines = 1,
-                            color = if (isDark) Color.White else Slate900
-                        )
+                        Text(testTitle, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 1)
                         Text(
                             text = "Time Remaining: $formattedTime",
-                            fontSize = 11.sp,
-                            color = if (secondsLeft < 300) NeonRose else NeonEmerald,
+                            fontSize = 12.sp,
+                            color = if (secondsLeft < 300) AccentRose else AccentEmerald,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -348,21 +302,21 @@ fun ActiveMockTestScreen(
                 actions = {
                     Button(
                         onClick = { showSubmitConfirmDialog = true },
-                        colors = ButtonDefaults.buttonColors(containerColor = NeonEmerald),
-                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentEmerald),
+                        shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                         modifier = Modifier.testTag("submit_mock_test_btn")
                     ) {
-                        Text("Submit", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Color.White)
+                        Text("Submit", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
         if (questions.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = NeonBlue)
+                CircularProgressIndicator()
             }
             return@Scaffold
         }
@@ -386,9 +340,9 @@ fun ActiveMockTestScreen(
                     val isAnswered = answers.containsKey(idx)
 
                     val bg = when {
-                        isCurrent -> NeonBlue
-                        isAnswered -> NeonEmerald
-                        else -> if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                        isCurrent -> PrimaryBlue
+                        isAnswered -> AccentEmerald
+                        else -> MaterialTheme.colorScheme.surfaceVariant
                     }
 
                     Box(
@@ -396,10 +350,6 @@ fun ActiveMockTestScreen(
                             .size(36.dp)
                             .clip(CircleShape)
                             .background(bg)
-                            .border(
-                                BorderStroke(1.dp, if (isCurrent) Color.White else Color.Transparent),
-                                CircleShape
-                            )
                             .clickable { currentQIndex = idx },
                         contentAlignment = Alignment.Center
                     ) {
@@ -407,21 +357,21 @@ fun ActiveMockTestScreen(
                             text = "${idx + 1}",
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp,
-                            color = if (isCurrent || isAnswered) Color.White else (if (isDark) Slate300 else Slate600)
+                            color = if (isCurrent || isAnswered) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             }
 
-            // Question Card in Frosted Glass
-            FrostedGlassCard(
+            // Question Card
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                backgroundColor = if (isDark) Color(0x1AFFFFFF) else Color(0xD9FFFFFF),
-                borderColor = if (isDark) Color(0x33FFFFFF) else Color(0x1F0F172A)
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(18.dp),
+                    modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Row(
@@ -431,18 +381,21 @@ fun ActiveMockTestScreen(
                         Text(
                             text = "Question ${currentQIndex + 1} of ${questions.size}",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            color = NeonBlue
+                            fontSize = 13.sp,
+                            color = PrimaryBlue
                         )
-                        FrostedPillBadge(text = "+4 MARKS", accentColor = NeonEmerald)
+                        Text(
+                            text = "+4 Marks / 0 Negative",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
 
                     Text(
                         text = question.questionText,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        lineHeight = 22.sp,
-                        color = if (isDark) Color.White else Slate900
+                        lineHeight = 22.sp
                     )
                 }
             }
@@ -455,18 +408,20 @@ fun ActiveMockTestScreen(
                 itemsIndexed(question.options) { optIdx, optionText ->
                     val isSelected = answers[currentQIndex] == optIdx
 
-                    FrostedGlassCard(
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clickable {
+                                viewModel.selectMockAnswer(currentQIndex, optIdx)
+                            }
                             .testTag("mock_option_$optIdx"),
-                        shape = RoundedCornerShape(16.dp),
-                        backgroundColor = if (isSelected) {
-                            if (isDark) NeonBlue.copy(alpha = 0.25f) else NeonBlue.copy(alpha = 0.15f)
-                        } else {
-                            if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF)
-                        },
-                        borderColor = if (isSelected) NeonBlue else (if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)),
-                        onClick = { viewModel.selectMockAnswer(currentQIndex, optIdx) }
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isSelected) PrimaryBlue.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surface
+                        ),
+                        border = CardDefaults.outlinedCardBorder().copy(
+                            brush = Brush.horizontalGradient(listOf(if (isSelected) PrimaryBlue else Color.Transparent, if (isSelected) PrimaryBlue else Color.Transparent))
+                        )
                     ) {
                         Row(
                             modifier = Modifier
@@ -475,24 +430,23 @@ fun ActiveMockTestScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isSelected) NeonBlue else (if (isDark) Color(0x26FFFFFF) else Color(0x1A0F172A))),
-                                contentAlignment = Alignment.Center
+                            Surface(
+                                shape = CircleShape,
+                                color = if (isSelected) PrimaryBlue else MaterialTheme.colorScheme.surfaceVariant,
+                                modifier = Modifier.size(28.dp)
                             ) {
-                                Text(
-                                    text = ('A' + optIdx).toString(),
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (isSelected) Color.White else (if (isDark) Slate300 else Slate600),
-                                    fontSize = 12.sp
-                                )
+                                Box(contentAlignment = Alignment.Center) {
+                                    Text(
+                                        text = ('A' + optIdx).toString(),
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp
+                                    )
+                                }
                             }
                             Text(
                                 text = optionText,
-                                fontSize = 13.sp,
-                                color = if (isDark) Color.White else Slate900,
+                                fontSize = 14.sp,
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -509,10 +463,9 @@ fun ActiveMockTestScreen(
                 Button(
                     onClick = { if (currentQIndex > 0) currentQIndex-- },
                     enabled = currentQIndex > 0,
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = if (isDark) Slate700 else Slate300)
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Previous", color = if (isDark) Color.White else Slate900)
+                    Text("Previous")
                 }
 
                 Button(
@@ -523,14 +476,9 @@ fun ActiveMockTestScreen(
                             showSubmitConfirmDialog = true
                         }
                     },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = NeonBlue)
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text(
-                        if (currentQIndex < questions.size - 1) "Next" else "Review & Submit",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Text(if (currentQIndex < questions.size - 1) "Next" else "Review & Submit")
                 }
             }
         }
@@ -550,10 +498,9 @@ fun ActiveMockTestScreen(
                         viewModel.submitMockTest(testTitle, subjectCode, durationMinutes)
                         showResultsDialog = true
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = NeonEmerald),
-                    shape = RoundedCornerShape(10.dp)
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentEmerald)
                 ) {
-                    Text("Yes, Submit", color = Color.White)
+                    Text("Yes, Submit")
                 }
             },
             dismissButton = {
@@ -582,7 +529,7 @@ fun ActiveMockTestScreen(
                         text = "Score: $score / $maxMarks Marks ($accuracy%)",
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
-                        color = NeonBlue
+                        color = PrimaryBlue
                     )
                     Text("Correct Answers: $correctCount out of ${questions.size}")
                     Text(
@@ -596,11 +543,9 @@ fun ActiveMockTestScreen(
                     onClick = {
                         showResultsDialog = false
                         viewModel.navigateTo(ScreenDestination.MockTestHub)
-                    },
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = NeonBlue)
+                    }
                 ) {
-                    Text("Back to Hub", color = Color.White)
+                    Text("Back to Hub")
                 }
             },
             dismissButton = {

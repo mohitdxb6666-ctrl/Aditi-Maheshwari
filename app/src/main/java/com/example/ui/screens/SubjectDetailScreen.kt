@@ -1,11 +1,8 @@
 package com.example.ui.screens
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,16 +17,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.SubjectType
-import com.example.ui.components.FrostedGlassCard
-import com.example.ui.components.FrostedPillBadge
-import com.example.ui.components.FrostedProgressBar
 import com.example.ui.theme.*
 import com.example.ui.viewmodel.MainViewModel
 import com.example.ui.viewmodel.ScreenDestination
@@ -46,27 +39,16 @@ fun SubjectDetailScreen(
     val subjectChapters = allChapters.filter { it.subjectCode == subjectCode }
     val avgMastery = if (subjectChapters.isNotEmpty()) subjectChapters.map { it.masteryPercentage }.average().toInt() else 0
     val totalMarks = subjectChapters.sumOf { it.cbseWeightageMarks }
-    val isDark = isSystemInDarkTheme()
 
     var showFormulaDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            subject.displayName,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            color = if (isDark) Color.White else Slate900
-                        )
-                        Text(
-                            "CBSE Class 12 • 2026 Syllabus",
-                            fontSize = 11.sp,
-                            color = if (isDark) Slate400 else Slate600
-                        )
+                        Text(subject.displayName, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("CBSE Class 12 • 2026 Syllabus", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
                 navigationIcon = {
@@ -74,11 +56,7 @@ fun SubjectDetailScreen(
                         onClick = { viewModel.navigateTo(ScreenDestination.Home) },
                         modifier = Modifier.testTag("back_button")
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = if (isDark) Color.White else Slate900
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
@@ -89,7 +67,7 @@ fun SubjectDetailScreen(
                         Icon(Icons.Default.Calculate, contentDescription = "Formula Sheet", tint = subjectColor)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
@@ -98,16 +76,15 @@ fun SubjectDetailScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .testTag("subject_detail_list"),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Subject Summary Header Card in Frosted Glass
+            // Subject Summary Header Card
             item {
-                FrostedGlassCard(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(24.dp),
-                    backgroundColor = if (isDark) subjectColor.copy(alpha = 0.15f) else Color(0xD9FFFFFF),
-                    borderColor = subjectColor.copy(alpha = 0.4f)
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = subjectColor.copy(alpha = 0.12f))
                 ) {
                     Column(
                         modifier = Modifier.padding(18.dp),
@@ -121,40 +98,71 @@ fun SubjectDetailScreen(
                             Column {
                                 Text(
                                     text = "${subject.displayName} Mastery",
-                                    fontSize = 17.sp,
+                                    fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isDark) Color.White else Slate900
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = "$totalMarks Marks Board Weightage in Curriculum",
-                                    fontSize = 11.sp,
-                                    color = if (isDark) Slate300 else Slate600
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
-                            FrostedPillBadge(
-                                text = "$avgMastery%",
-                                accentColor = subjectColor
-                            )
+                            Surface(
+                                shape = CircleShape,
+                                color = subjectColor
+                            ) {
+                                Text(
+                                    text = "$avgMastery%",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                )
+                            }
                         }
 
-                        FrostedProgressBar(
-                            progress = avgMastery / 100f,
-                            fillBrush = Brush.horizontalGradient(listOf(subjectColor, subjectColor.copy(alpha = 0.6f))),
-                            height = 8.dp
+                        LinearProgressIndicator(
+                            progress = { avgMastery / 100f },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            color = subjectColor,
+                            trackColor = subjectColor.copy(alpha = 0.2f)
                         )
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            FrostedPillBadge(
-                                text = "OFFLINE CACHED",
-                                accentColor = NeonEmerald
-                            )
-                            FrostedPillBadge(
-                                text = "${subjectChapters.size} CHAPTERS READY",
-                                accentColor = subjectColor
-                            )
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.surface
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Icon(Icons.Default.CloudDone, contentDescription = null, tint = AccentEmerald, modifier = Modifier.size(16.dp))
+                                    Text("Offline Cached", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                                }
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.surface
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = subjectColor, modifier = Modifier.size(16.dp))
+                                    Text("${subjectChapters.size} Chapters Ready", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                                }
+                            }
                         }
                     }
                 }
@@ -163,21 +171,20 @@ fun SubjectDetailScreen(
             item {
                 Text(
                     text = "All Chapters & Units",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (isDark) Color.White else Slate900
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
             items(subjectChapters) { chapter ->
-                FrostedGlassCard(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { viewModel.navigateTo(ScreenDestination.ChapterStudy(chapter.id)) }
                         .testTag("chapter_item_${chapter.id}"),
-                    shape = RoundedCornerShape(20.dp),
-                    backgroundColor = if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF),
-                    borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -192,47 +199,57 @@ fun SubjectDetailScreen(
                                 modifier = Modifier.weight(1f),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(38.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(subjectColor.copy(alpha = 0.2f))
-                                        .border(BorderStroke(1.dp, subjectColor.copy(alpha = 0.4f)), RoundedCornerShape(10.dp)),
-                                    contentAlignment = Alignment.Center
+                                Surface(
+                                    shape = RoundedCornerShape(10.dp),
+                                    color = subjectColor.copy(alpha = 0.15f),
+                                    modifier = Modifier.size(36.dp)
                                 ) {
-                                    Text(
-                                        text = "${chapter.chapterNumber}",
-                                        fontWeight = FontWeight.Bold,
-                                        color = subjectColor,
-                                        fontSize = 13.sp
-                                    )
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = "${chapter.chapterNumber}",
+                                            fontWeight = FontWeight.Bold,
+                                            color = subjectColor,
+                                            fontSize = 14.sp
+                                        )
+                                    }
                                 }
 
                                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                                     Text(
                                         text = chapter.title,
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp,
-                                        color = if (isDark) Color.White else Slate900
+                                        fontSize = 15.sp
                                     )
                                     Text(
                                         text = "CBSE Weightage: ${chapter.cbseWeightageMarks} Marks • ${chapter.totalQuestionsCount} Practice Problems",
-                                        fontSize = 11.sp,
-                                        color = if (isDark) Slate400 else Slate600
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
 
-                            FrostedPillBadge(
-                                text = "${chapter.masteryPercentage}%",
-                                accentColor = if (chapter.masteryPercentage >= 75) NeonEmerald else NeonAmber
-                            )
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (chapter.masteryPercentage >= 75) AccentEmerald.copy(alpha = 0.15f) else AccentAmber.copy(alpha = 0.15f)
+                            ) {
+                                Text(
+                                    text = "${chapter.masteryPercentage}%",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (chapter.masteryPercentage >= 75) AccentEmerald else AccentAmber,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
                         }
 
-                        FrostedProgressBar(
-                            progress = chapter.completedQuestionsCount.toFloat() / chapter.totalQuestionsCount.coerceAtLeast(1),
-                            fillBrush = Brush.horizontalGradient(listOf(subjectColor, subjectColor.copy(alpha = 0.6f))),
-                            height = 6.dp
+                        LinearProgressIndicator(
+                            progress = { chapter.completedQuestionsCount.toFloat() / chapter.totalQuestionsCount.coerceAtLeast(1) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                                .clip(RoundedCornerShape(3.dp)),
+                            color = subjectColor,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant
                         )
 
                         Row(
@@ -243,16 +260,18 @@ fun SubjectDetailScreen(
                             Text(
                                 text = "Solved: ${chapter.completedQuestionsCount}/${chapter.totalQuestionsCount}",
                                 fontSize = 11.sp,
-                                color = if (isDark) Slate400 else Slate600
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
-                            Button(
-                                onClick = { viewModel.navigateTo(ScreenDestination.ChapterStudy(chapter.id)) },
-                                colors = ButtonDefaults.buttonColors(containerColor = subjectColor),
-                                shape = RoundedCornerShape(10.dp),
-                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
-                            ) {
-                                Text("Study & Practice", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Button(
+                                    onClick = { viewModel.navigateTo(ScreenDestination.ChapterStudy(chapter.id)) },
+                                    colors = ButtonDefaults.buttonColors(containerColor = subjectColor),
+                                    shape = RoundedCornerShape(8.dp),
+                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                                ) {
+                                    Text("Study & Practice", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                                }
                             }
                         }
                     }
@@ -276,10 +295,9 @@ fun SubjectDetailScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(subjectChapters) { ch ->
-                        FrostedGlassCard(
-                            shape = RoundedCornerShape(12.dp),
-                            backgroundColor = if (isDark) Color(0x1AFFFFFF) else Color(0xD9FFFFFF),
-                            borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                        Card(
+                            shape = RoundedCornerShape(10.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(
@@ -292,8 +310,7 @@ fun SubjectDetailScreen(
                                 Text(
                                     text = ch.keyFormulas,
                                     fontSize = 12.sp,
-                                    lineHeight = 16.sp,
-                                    color = if (isDark) Color.White else Slate900
+                                    lineHeight = 16.sp
                                 )
                             }
                         }

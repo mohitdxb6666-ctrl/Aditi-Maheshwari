@@ -1,11 +1,8 @@
 package com.example.ui.screens
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,8 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.remote.gemini.GeminiModel
-import com.example.ui.components.FrostedGlassCard
-import com.example.ui.components.FrostedPillBadge
 import com.example.ui.theme.*
 import com.example.ui.viewmodel.MainViewModel
 import com.example.ui.viewmodel.ScreenDestination
@@ -41,7 +36,7 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
     val messages by viewModel.doubtMessages.collectAsState()
     val isLoading by viewModel.isAiLoading.collectAsState()
     val selectedModel by viewModel.selectedGeminiModel.collectAsState()
-    val isDark = isSystemInDarkTheme()
+    val isSearchGrounding by viewModel.enableSearchGrounding.collectAsState()
 
     var inputText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
@@ -51,7 +46,7 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
         "Explain Aldol Condensation mechanism",
         "Evaluate ∫ (sin x / (sin x + cos x)) dx from 0 to π/2",
         "Explain Lac Operon gene regulation",
-        "Top 5 high-weightage Physics questions for CBSE 12"
+        "What are top 5 high-weightage Physics questions for CBSE 12?"
     )
 
     LaunchedEffect(messages.size, isLoading) {
@@ -61,31 +56,29 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
     }
 
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
                     Column {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Text(
-                                "AI Doubt Solver",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                color = if (isDark) Color.White else Slate900
-                            )
-                            FrostedPillBadge(
-                                text = if (selectedModel == GeminiModel.PRO_THINKING) "THINKING PRO" else "FAST AI",
-                                accentColor = NeonBlue
-                            )
+                            Text("AI Doubt Solver", fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = AccentCyan.copy(alpha = 0.2f)
+                            ) {
+                                Text(
+                                    text = if (selectedModel == GeminiModel.PRO_THINKING) "High Thinking" else "Fast AI",
+                                    color = AccentCyan,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
                         }
-                        Text(
-                            "CBSE 12 Science & Maths AI Assistant",
-                            fontSize = 11.sp,
-                            color = if (isDark) Slate400 else Slate600
-                        )
+                        Text("CBSE 12 Science & Maths AI Assistant", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
                 navigationIcon = {
@@ -93,11 +86,7 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                         onClick = { viewModel.navigateTo(ScreenDestination.Home) },
                         modifier = Modifier.testTag("ai_doubt_back_btn")
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = if (isDark) Color.White else Slate900
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
@@ -105,14 +94,10 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                         onClick = { viewModel.clearDoubtChat() },
                         modifier = Modifier.testTag("clear_chat_btn")
                     ) {
-                        Icon(
-                            Icons.Default.DeleteOutline,
-                            contentDescription = "Clear Chat",
-                            tint = if (isDark) Slate400 else Slate600
-                        )
+                        Icon(Icons.Default.DeleteOutline, contentDescription = "Clear Chat")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
@@ -122,25 +107,16 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                 .padding(padding)
                 .testTag("ai_doubt_chat_container")
         ) {
-            // Model Selector in Frosted Glass Card
-            FrostedGlassCard(
+            // Model Selector Bar
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 6.dp),
-                shape = RoundedCornerShape(18.dp),
-                backgroundColor = if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF),
-                borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
-                Column(
-                    modifier = Modifier.padding(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        "AI Reasoning Engine:",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isDark) Slate300 else Slate600
-                    )
+                Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("Model & Reasoning Engine:", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -151,11 +127,7 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                             label = { Text("Pro (Thinking)", fontSize = 11.sp) },
                             leadingIcon = {
                                 Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(14.dp))
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NeonBlue.copy(alpha = 0.25f),
-                                selectedLabelColor = NeonBlue
-                            )
+                            }
                         )
 
                         FilterChip(
@@ -164,11 +136,7 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                             label = { Text("Flash (Search)", fontSize = 11.sp) },
                             leadingIcon = {
                                 Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(14.dp))
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NeonIndigo.copy(alpha = 0.25f),
-                                selectedLabelColor = NeonIndigo
-                            )
+                            }
                         )
 
                         FilterChip(
@@ -177,11 +145,7 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                             label = { Text("Lite", fontSize = 11.sp) },
                             leadingIcon = {
                                 Icon(Icons.Default.Bolt, contentDescription = null, modifier = Modifier.size(14.dp))
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NeonEmerald.copy(alpha = 0.25f),
-                                selectedLabelColor = NeonEmerald
-                            )
+                            }
                         )
                     }
                 }
@@ -191,25 +155,17 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 4.dp),
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 items(quickChips) { chip ->
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(if (isDark) Color(0x1AFFFFFF) else Color(0xB3FFFFFF))
-                            .border(BorderStroke(1.dp, if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)), RoundedCornerShape(20.dp))
-                            .clickable { viewModel.sendDoubt(chip) }
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
-                    ) {
-                        Text(
-                            chip,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            color = if (isDark) Slate200 else Slate700
-                        )
-                    }
+                    SuggestionChip(
+                        onClick = {
+                            viewModel.sendDoubt(chip)
+                        },
+                        label = { Text(chip, fontSize = 11.sp, maxLines = 1) },
+                        shape = RoundedCornerShape(8.dp)
+                    )
                 }
             }
 
@@ -219,8 +175,8 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(messages) { msg ->
@@ -231,46 +187,56 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
                     ) {
                         if (!isUser) {
-                            Box(
+                            Surface(
+                                shape = CircleShape,
+                                color = PrimaryBlue.copy(alpha = 0.15f),
                                 modifier = Modifier
-                                    .size(34.dp)
-                                    .clip(CircleShape)
-                                    .background(GlassPinkOrangeGradient),
-                                contentAlignment = Alignment.Center
+                                    .size(32.dp)
+                                    .align(Alignment.Top)
                             ) {
-                                Icon(
-                                    Icons.Default.Psychology,
-                                    contentDescription = "AI",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(18.dp)
-                                )
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        Icons.Default.AutoAwesome,
+                                        contentDescription = "AI",
+                                        tint = PrimaryBlue,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                         }
 
-                        FrostedGlassCard(
+                        Card(
                             shape = RoundedCornerShape(
-                                topStart = 18.dp,
-                                topEnd = 18.dp,
-                                bottomStart = if (isUser) 18.dp else 4.dp,
-                                bottomEnd = if (isUser) 4.dp else 18.dp
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomStart = if (isUser) 16.dp else 4.dp,
+                                bottomEnd = if (isUser) 4.dp else 16.dp
                             ),
-                            backgroundColor = if (isUser) {
-                                NeonBlue.copy(alpha = 0.35f)
-                            } else {
-                                if (isDark) Color(0x1AFFFFFF) else Color(0xE6FFFFFF)
-                            },
-                            borderColor = if (isUser) NeonBlue.copy(alpha = 0.6f) else (if (isDark) Color(0x33FFFFFF) else Color(0x1F0F172A)),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isUser) PrimaryBlue else MaterialTheme.colorScheme.surfaceVariant
+                            ),
                             modifier = Modifier.widthIn(max = 300.dp)
                         ) {
-                            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 if (!isUser && msg.isThinkingResponse) {
-                                    FrostedPillBadge(text = "🧠 DEEP STEP REASONING", accentColor = NeonCyan)
+                                    Surface(
+                                        shape = RoundedCornerShape(4.dp),
+                                        color = AccentCyan.copy(alpha = 0.15f)
+                                    ) {
+                                        Text(
+                                            text = "🧠 High Thinking Deep Solution",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = AccentCyan,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
                                 }
 
                                 Text(
                                     text = msg.messageText,
-                                    color = if (isUser) Color.White else (if (isDark) Color.White else Slate900),
+                                    color = if (isUser) Color.White else MaterialTheme.colorScheme.onSurface,
                                     fontSize = 13.sp,
                                     lineHeight = 19.sp
                                 )
@@ -284,51 +250,40 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(start = 42.dp, top = 4.dp)
+                            modifier = Modifier.padding(start = 40.dp, top = 4.dp)
                         ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp,
-                                color = NeonBlue
-                            )
+                            CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                             Text(
                                 text = if (selectedModel == GeminiModel.PRO_THINKING) "Reasoning step-by-step with high thinking..." else "Consulting CBSE syllabus...",
                                 fontSize = 12.sp,
-                                color = if (isDark) Slate400 else Slate600
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 }
             }
 
-            // Frosted Input Bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(if (isDark) Color(0x1A000000) else Color(0x40FFFFFF))
-                    .border(BorderStroke(1.dp, if (isDark) Color(0x1AFFFFFF) else Color(0x1A000000)))
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+            // Input Bar
+            Surface(
+                tonalElevation = 3.dp,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     OutlinedTextField(
                         value = inputText,
                         onValueChange = { inputText = it },
-                        placeholder = { Text("Ask any science/maths doubt or derivation...", fontSize = 12.sp) },
+                        placeholder = { Text("Ask any science/maths doubt or derivation...", fontSize = 13.sp) },
                         modifier = Modifier
                             .weight(1f)
                             .testTag("ai_doubt_input_field"),
                         shape = RoundedCornerShape(24.dp),
-                        maxLines = 4,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NeonBlue,
-                            unfocusedBorderColor = if (isDark) Color(0x33FFFFFF) else Color(0x33000000),
-                            focusedContainerColor = if (isDark) Color(0x14FFFFFF) else Color.White,
-                            unfocusedContainerColor = if (isDark) Color(0x0AFFFFFF) else Color.White
-                        )
+                        maxLines = 4
                     )
 
                     IconButton(
@@ -341,16 +296,14 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
                         },
                         enabled = inputText.isNotBlank() && !isLoading,
                         modifier = Modifier
-                            .size(46.dp)
                             .clip(CircleShape)
-                            .background(if (inputText.isNotBlank()) NeonBlue else (if (isDark) Color(0x26FFFFFF) else Color(0x26000000)))
+                            .background(if (inputText.isNotBlank()) PrimaryBlue else MaterialTheme.colorScheme.surfaceVariant)
                             .testTag("send_doubt_btn")
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Send",
-                            tint = if (inputText.isNotBlank()) Color.White else (if (isDark) Slate500 else Slate400),
-                            modifier = Modifier.size(20.dp)
+                            tint = if (inputText.isNotBlank()) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -358,4 +311,3 @@ fun AiDoubtSolverScreen(viewModel: MainViewModel) {
         }
     }
 }
-

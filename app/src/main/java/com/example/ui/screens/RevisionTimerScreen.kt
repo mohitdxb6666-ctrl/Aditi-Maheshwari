@@ -1,10 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,8 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.SubjectType
-import com.example.ui.components.FrostedGlassCard
-import com.example.ui.components.FrostedPillBadge
 import com.example.ui.theme.*
 import com.example.ui.viewmodel.MainViewModel
 import com.example.ui.viewmodel.ScreenDestination
@@ -37,7 +32,6 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
     val totalDurationSeconds by viewModel.timerDurationSeconds.collectAsState()
     val secondsLeft by viewModel.timerSecondsLeft.collectAsState()
     val isRunning by viewModel.isTimerRunning.collectAsState()
-    val isDark = isSystemInDarkTheme()
 
     var selectedSubject by remember { mutableStateOf("ALL") }
 
@@ -59,22 +53,12 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
     }
 
     Scaffold(
-        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            "Revision Study Timer",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp,
-                            color = if (isDark) Color.White else Slate900
-                        )
-                        Text(
-                            "Disciplined Practice & Exam Simulation",
-                            fontSize = 11.sp,
-                            color = if (isDark) Slate400 else Slate600
-                        )
+                        Text("Revision Study Timer", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text("Disciplined Practice & Exam Simulation", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 },
                 navigationIcon = {
@@ -82,14 +66,10 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                         onClick = { viewModel.navigateTo(ScreenDestination.Home) },
                         modifier = Modifier.testTag("revision_timer_back_btn")
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = if (isDark) Color.White else Slate900
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface)
             )
         }
     ) { padding ->
@@ -102,59 +82,34 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Preset Chips in Frosted Glass Container
-            FrostedGlassCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                backgroundColor = if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF),
-                borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+            // Preset Chips
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Text("Select Study Mode Preset", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        "Study Mode Preset",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = if (isDark) Color.White else Slate900
+                    FilterChip(
+                        selected = totalDurationSeconds == 25 * 60,
+                        onClick = { viewModel.setTimerPreset(25) },
+                        label = { Text("25m Pomodoro") },
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        FilterChip(
-                            selected = totalDurationSeconds == 25 * 60,
-                            onClick = { viewModel.setTimerPreset(25) },
-                            label = { Text("25m Pomodoro", fontSize = 11.sp) },
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NeonBlue.copy(alpha = 0.25f),
-                                selectedLabelColor = NeonBlue
-                            )
-                        )
-                        FilterChip(
-                            selected = totalDurationSeconds == 45 * 60,
-                            onClick = { viewModel.setTimerPreset(45) },
-                            label = { Text("45m Block", fontSize = 11.sp) },
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NeonIndigo.copy(alpha = 0.25f),
-                                selectedLabelColor = NeonIndigo
-                            )
-                        )
-                        FilterChip(
-                            selected = totalDurationSeconds == 180 * 60,
-                            onClick = { viewModel.setTimerPreset(180) },
-                            label = { Text("3-Hr Mock", fontSize = 11.sp) },
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = NeonCyan.copy(alpha = 0.25f),
-                                selectedLabelColor = NeonCyan
-                            )
-                        )
-                    }
+                    FilterChip(
+                        selected = totalDurationSeconds == 45 * 60,
+                        onClick = { viewModel.setTimerPreset(45) },
+                        label = { Text("45m Deep Block") },
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
+                    FilterChip(
+                        selected = totalDurationSeconds == 180 * 60,
+                        onClick = { viewModel.setTimerPreset(180) },
+                        label = { Text("3-Hour Board Mock") },
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
                 }
             }
 
@@ -163,11 +118,7 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Text(
-                    "Tag Subject for Session Logging:",
-                    fontSize = 11.sp,
-                    color = if (isDark) Slate400 else Slate600
-                )
+                Text("Tag Subject for Session Logging:", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     item {
                         FilterChip(
@@ -186,28 +137,19 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                 }
             }
 
-            // Circular Visual Timer in Frosted Glass Glow Container
+            // Circular Visual Timer
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(260.dp)
                     .testTag("circular_timer_display")
             ) {
-                // Frosted background circular backdrop
-                Box(
-                    modifier = Modifier
-                        .size(240.dp)
-                        .clip(CircleShape)
-                        .background(if (isDark) Color(0x14FFFFFF) else Color(0xCCFFFFFF))
-                        .border(BorderStroke(1.dp, if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)), CircleShape)
-                )
-
                 CircularProgressIndicator(
                     progress = { progress },
-                    modifier = Modifier.size(230.dp),
-                    strokeWidth = 12.dp,
-                    color = if (isRunning) NeonBlue else NeonIndigo.copy(alpha = 0.6f),
-                    trackColor = if (isDark) Color(0x1AFFFFFF) else Color(0x1F0F172A),
+                    modifier = Modifier.fillMaxSize(),
+                    strokeWidth = 14.dp,
+                    color = if (isRunning) PrimaryBlue else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     strokeCap = StrokeCap.Round
                 )
 
@@ -217,13 +159,15 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                 ) {
                     Text(
                         text = formattedTime,
-                        fontSize = 38.sp,
+                        fontSize = 36.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = if (isDark) Color.White else Slate900
+                        color = MaterialTheme.colorScheme.onSurface
                     )
-                    FrostedPillBadge(
-                        text = if (isRunning) "🔥 SESSION ACTIVE" else "READY TO FOCUS",
-                        accentColor = if (isRunning) NeonEmerald else NeonAmber
+                    Text(
+                        text = if (isRunning) "🔥 Session Active" else "Ready to Focus",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (isRunning) AccentEmerald else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -234,21 +178,13 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(
+                OutlinedIconButton(
                     onClick = { viewModel.resetTimer() },
                     modifier = Modifier
                         .size(54.dp)
-                        .clip(CircleShape)
-                        .background(if (isDark) Color(0x1AFFFFFF) else Color(0xCCFFFFFF))
-                        .border(BorderStroke(1.dp, if (isDark) Color(0x33FFFFFF) else Color(0x1F0F172A)), CircleShape)
                         .testTag("reset_timer_btn")
                 ) {
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = "Reset",
-                        modifier = Modifier.size(22.dp),
-                        tint = if (isDark) Color.White else Slate900
-                    )
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset", modifier = Modifier.size(24.dp))
                 }
 
                 Spacer(modifier = Modifier.width(20.dp))
@@ -256,56 +192,46 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                 Button(
                     onClick = { viewModel.startPauseTimer(selectedSubject) },
                     modifier = Modifier
-                        .height(54.dp)
+                        .height(58.dp)
                         .width(160.dp)
                         .testTag("start_pause_timer_btn"),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isRunning) NeonAmber else NeonBlue
+                        containerColor = if (isRunning) AccentAmber else PrimaryBlue
                     )
                 ) {
                     Icon(
                         if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = if (isRunning) "Pause" else "Start",
-                        tint = Color.White
+                        contentDescription = if (isRunning) "Pause" else "Start"
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = if (isRunning) "Pause" else "Start Focus",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            // Tip Banner in Frosted Glass
-            FrostedGlassCard(
+            // Tip Banner
+            Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                backgroundColor = if (isDark) Color(0x14FFFFFF) else Color(0xD9FFFFFF),
-                borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F0F172A)
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        Icons.Default.Psychology,
-                        contentDescription = null,
-                        tint = NeonBlue,
-                        modifier = Modifier.size(18.dp)
-                    )
+                    Icon(Icons.Default.Psychology, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(18.dp))
                     Text(
                         text = "CBSE Class 12 Topper Tip: Do 45 mins uninterrupted derivation writing followed by 5 mins flashcard retrieval.",
                         fontSize = 11.sp,
-                        lineHeight = 15.sp,
-                        color = if (isDark) Slate300 else Slate700
+                        lineHeight = 15.sp
                     )
                 }
             }
         }
     }
 }
-

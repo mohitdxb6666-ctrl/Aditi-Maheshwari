@@ -277,10 +277,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _timerSecondsLeft.value = _timerDurationSeconds.value
     }
 
-    fun toggleTimer(subjectCode: String = "ALL") {
-        startPauseTimer(subjectCode)
-    }
-
     // Peer Discussions
     fun postNewDiscussion(subjectCode: String, groupName: String, title: String, question: String) {
         if (title.isBlank() || question.isBlank()) return
