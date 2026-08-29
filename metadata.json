@@ -1,0 +1,6 @@
+{
+  "name": "CBSE 12 Study Companion",
+  "description": "Comprehensive CBSE Class 12 Science & Maths study companion with offline chapter notes, interactive flashcards, AI doubt solver with thinking mode, mock tests, revision timer, peer study groups, and PDF study report exporter.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
