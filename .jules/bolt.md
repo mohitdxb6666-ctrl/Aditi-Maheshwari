@@ -1,0 +1,3 @@
+## 2024-05-20 - Kotlin Enums values() vs entries
+**Learning:** In Kotlin 1.9.0 and later, the `entries` property on enums is preferred over the `values()` method because `values()` creates a new array every time it's called, causing memory overhead, while `entries` returns a pre-allocated immutable list. We observed widespread usage of `SubjectType.values().toList()` (or `.forEach`/`.firstOrNull`) in Compose UI code, which translates to array allocations on every recomposition.
+**Action:** Replace `EnumClass.values()` with `EnumClass.entries` where possible to avoid unnecessary allocations, especially in UI loops and frequently accessed paths.
