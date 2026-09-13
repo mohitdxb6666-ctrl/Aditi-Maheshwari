@@ -50,7 +50,7 @@ fun ChapterStudyScreen(
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Concept Notes", "Flashcards (${chapterFlashcards.size})", "Practice Quiz (${questions.size})")
 
-    val subject = SubjectType.values().firstOrNull { it.code == chapter?.subjectCode } ?: SubjectType.MATHEMATICS
+    val subject = /* Bolt: Using Enum.entries instead of values() avoids creating a new array on every call, saving memory allocations during recomposition */ SubjectType.entries.firstOrNull { it.code == chapter?.subjectCode } ?: SubjectType.MATHEMATICS
     val subjectColor = Color(subject.colorHex)
 
     Scaffold(

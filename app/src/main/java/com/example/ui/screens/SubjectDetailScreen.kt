@@ -33,7 +33,7 @@ fun SubjectDetailScreen(
     subjectCode: String,
     viewModel: MainViewModel
 ) {
-    val subject = SubjectType.values().firstOrNull { it.code == subjectCode } ?: SubjectType.MATHEMATICS
+    val subject = /* Bolt: Using Enum.entries instead of values() avoids creating a new array on every call, saving memory allocations during recomposition */ SubjectType.entries.firstOrNull { it.code == subjectCode } ?: SubjectType.MATHEMATICS
     val subjectColor = Color(subject.colorHex)
     val allChapters by viewModel.allChapters.collectAsState()
     val subjectChapters = allChapters.filter { it.subjectCode == subjectCode }
