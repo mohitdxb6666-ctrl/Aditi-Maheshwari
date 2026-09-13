@@ -114,7 +114,7 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
             }
 
             // Subject Mock Test Options
-            itemsIndexed(SubjectType.values().toList()) { _, subject ->
+            itemsIndexed(/* Bolt: Using Enum.entries instead of values() avoids creating a new array on every call, saving memory allocations during recomposition */ SubjectType.entries) { _, subject ->
                 val subjectColor = Color(subject.colorHex)
 
                 Card(

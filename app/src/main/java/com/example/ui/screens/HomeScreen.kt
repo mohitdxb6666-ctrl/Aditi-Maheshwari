@@ -313,7 +313,7 @@ fun HomeScreen(viewModel: MainViewModel) {
             }
         }
 
-        items(SubjectType.values().toList()) { subject ->
+        items(/* Bolt: Using Enum.entries instead of values() avoids creating a new array on every call, saving memory allocations during recomposition */ SubjectType.entries) { subject ->
             val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()
