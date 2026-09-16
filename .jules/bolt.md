@@ -1,0 +1,3 @@
+## 2024-05-18 - Replacing `Enum.values()` with `Enum.entries` in Jetpack Compose
+**Learning:** `Enum.values()` allocates a new array every time it is called. In Jetpack Compose, calling it repeatedly inside rendering loops like `items()` or `itemsIndexed()` causes unnecessary object allocations, which can lead to GC overhead and negatively impact performance (jank) during list scrolling. `Enum.entries` provides a pre-allocated immutable list, making it much more performant.
+**Action:** Replace `Enum.values()` with `Enum.entries` everywhere in Kotlin codebases, especially within Compose `items()` or `forEach` rendering blocks.
