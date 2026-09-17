@@ -127,7 +127,8 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                             label = { Text("General", fontSize = 11.sp) }
                         )
                     }
-                    items(SubjectType.values().toList()) { sub ->
+                    // Optimization: Use .entries instead of .values() to prevent unnecessary array allocations
+                    items(SubjectType.entries) { sub ->
                         FilterChip(
                             selected = selectedSubject == sub.code,
                             onClick = { selectedSubject = sub.code },

@@ -313,7 +313,8 @@ fun HomeScreen(viewModel: MainViewModel) {
             }
         }
 
-        items(SubjectType.values().toList()) { subject ->
+        // Optimization: Use .entries instead of .values() to prevent unnecessary array allocations
+        items(SubjectType.entries) { subject ->
             val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()

@@ -33,7 +33,8 @@ fun SubjectDetailScreen(
     subjectCode: String,
     viewModel: MainViewModel
 ) {
-    val subject = SubjectType.values().firstOrNull { it.code == subjectCode } ?: SubjectType.MATHEMATICS
+    // Optimization: Use .entries instead of .values() to prevent unnecessary array allocations
+    val subject = SubjectType.entries.firstOrNull { it.code == subjectCode } ?: SubjectType.MATHEMATICS
     val subjectColor = Color(subject.colorHex)
     val allChapters by viewModel.allChapters.collectAsState()
     val subjectChapters = allChapters.filter { it.subjectCode == subjectCode }

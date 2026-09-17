@@ -114,7 +114,8 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
             }
 
             // Subject Mock Test Options
-            itemsIndexed(SubjectType.values().toList()) { _, subject ->
+            // Optimization: Use .entries instead of .values() to prevent unnecessary array allocations
+            itemsIndexed(SubjectType.entries) { _, subject ->
                 val subjectColor = Color(subject.colorHex)
 
                 Card(
