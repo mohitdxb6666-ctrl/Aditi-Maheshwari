@@ -50,7 +50,8 @@ fun ChapterStudyScreen(
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Concept Notes", "Flashcards (${chapterFlashcards.size})", "Practice Quiz (${questions.size})")
 
-    val subject = SubjectType.values().firstOrNull { it.code == chapter?.subjectCode } ?: SubjectType.MATHEMATICS
+    // Optimization: Use .entries instead of .values() to prevent unnecessary array allocations
+    val subject = SubjectType.entries.firstOrNull { it.code == chapter?.subjectCode } ?: SubjectType.MATHEMATICS
     val subjectColor = Color(subject.colorHex)
 
     Scaffold(
