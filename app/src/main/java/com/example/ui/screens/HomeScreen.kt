@@ -313,7 +313,8 @@ fun HomeScreen(viewModel: MainViewModel) {
             }
         }
 
-        items(SubjectType.values().toList()) { subject ->
+        // PERFORMANCE OPTIMIZATION: Using Enum.entries instead of Enum.values() to avoid array allocation on each recomposition
+        items(SubjectType.entries) { subject ->
             val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()

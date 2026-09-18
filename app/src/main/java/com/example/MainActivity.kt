@@ -132,7 +132,8 @@ fun MainAppScreen(
                     containerColor = MaterialTheme.colorScheme.surface,
                     tonalElevation = 6.dp
                 ) {
-                    NavigationTab.values().forEach { tab ->
+                    // PERFORMANCE OPTIMIZATION: Using Enum.entries instead of Enum.values() to avoid array allocation on each recomposition
+                    NavigationTab.entries.forEach { tab ->
                         val isSelected = when (tab) {
                             NavigationTab.HOME -> currentScreen is ScreenDestination.Home
                             NavigationTab.MOCK_TESTS -> currentScreen is ScreenDestination.MockTestHub

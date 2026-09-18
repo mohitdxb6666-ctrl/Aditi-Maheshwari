@@ -114,7 +114,8 @@ fun MockTestHubScreen(viewModel: MainViewModel) {
             }
 
             // Subject Mock Test Options
-            itemsIndexed(SubjectType.values().toList()) { _, subject ->
+             // PERFORMANCE OPTIMIZATION: Using Enum.entries instead of Enum.values() to avoid array allocation on each recomposition
+            itemsIndexed(SubjectType.entries) { _, subject ->
                 val subjectColor = Color(subject.colorHex)
 
                 Card(
