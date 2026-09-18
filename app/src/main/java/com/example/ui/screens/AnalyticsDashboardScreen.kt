@@ -225,7 +225,8 @@ fun AnalyticsDashboardScreen(viewModel: MainViewModel) {
                     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Text("Subject-by-Subject Mastery", fontWeight = FontWeight.Bold, fontSize = 15.sp)
 
-                        SubjectType.values().forEach { sub ->
+                        // PERFORMANCE OPTIMIZATION: Using Enum.entries instead of Enum.values() to avoid array allocation on each recomposition
+                        SubjectType.entries.forEach { sub ->
                             val subChs = allChapters.filter { it.subjectCode == sub.code }
                             val subMastery = if (subChs.isNotEmpty()) subChs.map { it.masteryPercentage }.average().toInt() else 0
                             val subColor = Color(sub.colorHex)

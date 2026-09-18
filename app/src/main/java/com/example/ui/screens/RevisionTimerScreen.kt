@@ -127,7 +127,8 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                             label = { Text("General", fontSize = 11.sp) }
                         )
                     }
-                    items(SubjectType.values().toList()) { sub ->
+                    // PERFORMANCE OPTIMIZATION: Using Enum.entries instead of Enum.values() to avoid array allocation on each recomposition
+                    items(SubjectType.entries) { sub ->
                         FilterChip(
                             selected = selectedSubject == sub.code,
                             onClick = { selectedSubject = sub.code },
