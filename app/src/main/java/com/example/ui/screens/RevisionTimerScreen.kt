@@ -127,7 +127,7 @@ fun RevisionTimerScreen(viewModel: MainViewModel) {
                             label = { Text("General", fontSize = 11.sp) }
                         )
                     }
-                    items(SubjectType.values().toList()) { sub ->
+                    items(SubjectType.entries.toList()) { sub ->
                         FilterChip(
                             selected = selectedSubject == sub.code,
                             onClick = { selectedSubject = sub.code },
