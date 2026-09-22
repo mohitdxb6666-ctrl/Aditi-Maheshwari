@@ -313,7 +313,8 @@ fun HomeScreen(viewModel: MainViewModel) {
             }
         }
 
-        items(SubjectType.values().toList()) { subject ->
+        // ⚡ Bolt: Using Enum.entries instead of Enum.values() to avoid unnecessary array allocations in Compose render loops
+        items(SubjectType.entries) { subject ->
             val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()
