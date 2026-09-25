@@ -90,7 +90,7 @@ fun PeerStudyGroupsScreen(viewModel: MainViewModel) {
                         label = { Text("All Groups") }
                     )
                 }
-                items(SubjectType.values().toList()) { sub ->
+                items(SubjectType.entries) { sub ->
                     FilterChip(
                         selected = selectedSubjectFilter == sub.code,
                         onClick = { selectedSubjectFilter = sub.code },
@@ -244,7 +244,7 @@ fun PeerStudyGroupsScreen(viewModel: MainViewModel) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text("Select Subject:", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        items(SubjectType.values().toList()) { sub ->
+                        items(SubjectType.entries) { sub ->
                             FilterChip(
                                 selected = postSubject == sub.code,
                                 onClick = {
