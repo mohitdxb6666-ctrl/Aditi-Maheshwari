@@ -1,0 +1,3 @@
+## 2024-05-19 - Using Enum.entries instead of Enum.values() for Compose loops
+**Learning:** In Kotlin, `Enum.values()` creates a new array allocation every time it's called. When used in tight rendering loops like Compose's `items()` inside `LazyColumn` or `LazyRow`, this can cause unnecessary allocations, memory pressure, and potential micro-stutters during scrolling. `Enum.entries`, available since Kotlin 1.9.0, provides an immutable, pre-allocated list of enum values which avoids this overhead.
+**Action:** Always prefer `Enum.entries` over `Enum.values()` when iterating over enum constants in Jetpack Compose, or anywhere else where the operation occurs frequently to prevent garbage collection strain.
