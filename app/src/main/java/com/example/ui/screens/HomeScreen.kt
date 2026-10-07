@@ -41,6 +41,25 @@ fun HomeScreen(viewModel: MainViewModel) {
     val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
     val masteredCards = allFlashcards.count { it.isMastered }
 
+    // ⚡ Bolt: Group chapters by subject outside the rendering loop to avoid
+    // expensive O(N) filtering per subject during every recomposition.
+    val chaptersBySubject = remember(allChapters) {
+        allChapters.groupBy { it.subjectCode }
+    }
+
+    // ⚡ Bolt: Pre-calculate mastery per subject
+    val subjectMasteryMap = remember(chaptersBySubject) {
+        SubjectType.entries.associateWith { subject ->
+            val subjectChapters = chaptersBySubject[subject.code] ?: emptyList()
+            val mastery = if (subjectChapters.isNotEmpty()) {
+                subjectChapters.map { it.masteryPercentage }.average().toInt()
+            } else {
+                0
+            }
+            Pair(subjectChapters.size, mastery)
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -314,14 +333,11 @@ fun HomeScreen(viewModel: MainViewModel) {
         }
 
         items(SubjectType.entries) { subject ->
-            val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
-            val subjectMastery = if (subjectChapters.isNotEmpty()) {
-                subjectChapters.map { it.masteryPercentage }.average().toInt()
-            } else 0
+            val (chaptersCount, subjectMastery) = subjectMasteryMap[subject] ?: Pair(0, 0)
 
             SubjectCard(
                 subject = subject,
-                chaptersCount = subjectChapters.size,
+                chaptersCount = chaptersCount,
                 mastery = subjectMastery,
                 onClick = { viewModel.navigateTo(ScreenDestination.SubjectDetail(subject.code)) }
             )
