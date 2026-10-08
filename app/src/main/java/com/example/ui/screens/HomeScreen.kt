@@ -36,10 +36,13 @@ fun HomeScreen(viewModel: MainViewModel) {
     val allFlashcards by viewModel.allFlashcards.collectAsState()
     val allTests by viewModel.allTestResults.collectAsState()
 
-    val totalChapters = allChapters.size
-    val completedChapters = allChapters.count { it.masteryPercentage >= 75 }
-    val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
-    val masteredCards = allFlashcards.count { it.isMastered }
+    val totalChapters = remember(allChapters) { allChapters.size }
+    val completedChapters = remember(allChapters) { allChapters.count { it.masteryPercentage >= 75 } }
+    val weakChapters = remember(allChapters) { allChapters.filter { it.masteryPercentage < 65 } }
+    val masteredCards = remember(allFlashcards) { allFlashcards.count { it.isMastered } }
+
+    // Pre-calculate chapters by subject to avoid O(N) filtering in the LazyColumn items block
+    val chaptersBySubject = remember(allChapters) { allChapters.groupBy { it.subjectCode } }
 
     LazyColumn(
         modifier = Modifier
@@ -314,7 +317,7 @@ fun HomeScreen(viewModel: MainViewModel) {
         }
 
         items(SubjectType.entries) { subject ->
-            val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
+            val subjectChapters = chaptersBySubject[subject.code] ?: emptyList()
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()
             } else 0
