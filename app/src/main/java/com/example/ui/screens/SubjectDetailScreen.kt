@@ -36,7 +36,10 @@ fun SubjectDetailScreen(
     val subject = SubjectType.entries.firstOrNull { it.code == subjectCode } ?: SubjectType.MATHEMATICS
     val subjectColor = Color(subject.colorHex)
     val allChapters by viewModel.allChapters.collectAsState()
-    val subjectChapters = allChapters.filter { it.subjectCode == subjectCode }
+
+    // Bolt: Use remember to memoize chapter filtering to avoid O(N) recalculations on recomposition
+    val subjectChapters = remember(allChapters, subjectCode) { allChapters.filter { it.subjectCode == subjectCode } }
+
     val avgMastery = if (subjectChapters.isNotEmpty()) subjectChapters.map { it.masteryPercentage }.average().toInt() else 0
     val totalMarks = subjectChapters.sumOf { it.cbseWeightageMarks }
 
