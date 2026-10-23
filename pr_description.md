@@ -1,0 +1,4 @@
+💡 What: Optimized list filtering operations inside `HomeScreen`'s `items()` rendering loop by caching computed subject stats (count & mastery) using `remember(allChapters) { allChapters.groupBy(...) }` and mapping them into a hash map. Wrapped generic `count` operations (`completedChapters`, `weakChapters`, `masteredCards`) in `remember` blocks.
+🎯 Why: Inside Jetpack Compose `LazyColumn` or `LazyRow` items blocks, O(N) operations cause unneeded memory churn and drop frames during recompositions, especially as `allChapters` grows. O(N*S) operations (filtering for every subject code) exacerbate this.
+📊 Impact: Eliminates unneeded recomposition calculation logic for the `SubjectCard` items loop. Recompositions are now instantaneous for the static UI since properties are memoized to a fast hash map lookup (O(1)).
+🔬 Measurement: Verify using Layout Inspector or system trace for recompositions on `HomeScreen`.
