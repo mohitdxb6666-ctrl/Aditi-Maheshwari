@@ -1,0 +1,7 @@
+💡 What: Replaced the O(N) `allChapters.filter { ... }` operation inside the `LazyColumn`'s `items()` block with a pre-calculated `groupBy` map using `remember`.
+
+🎯 Why: Running an O(N) list filtering operation for every subject inside a Compose rendering loop causes unnecessary computation and memory allocation on every recomposition, significantly degrading UI performance and scrolling smoothness.
+
+📊 Impact: Reduces the time complexity during rendering from O(N * M) (where N is chapters, M is subjects) to O(1) lookups. This entirely eliminates redundant list traversals during recomposition, making the Home Screen faster and smoother.
+
+🔬 Measurement: Verify by scrolling the Home Screen containing many chapters. The UI frame rate should be more stable with fewer dropped frames, and Android Studio Profiler will show reduced CPU usage and garbage collection events during recomposition.
