@@ -1,3 +1,3 @@
-## 2024-11-23 - Avoid Enum.values() in Compose rendering loops
-**Learning:** `Enum.values()` in Kotlin allocates a new array each time it's called. When used inside a Jetpack Compose rendering loop (like `items(SubjectType.values().toList())` or `NavigationTab.values().forEach`), it causes unnecessary memory allocation on every recomposition.
-**Action:** Use `Enum.entries` instead, which returns a pre-allocated unmodifiable list, avoiding memory churn during Compose recompositions.
+## 2024-05-15 - Compose LazyColumn items() filtering
+**Learning:** In Jetpack Compose, executing `filter` operations on large collections (like `allChapters.filter`) inside a `LazyColumn` `items()` rendering block will run on every recomposition as items enter the view, causing unnecessary O(N) recalculations and CPU overhead.
+**Action:** Always extract O(N) calculations (like list filtering) outside the rendering loop. Pre-calculate values using `remember` (e.g. `groupBy` to create a Map) and perform O(1) lookups inside the `items()` block instead.
