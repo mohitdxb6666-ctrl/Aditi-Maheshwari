@@ -41,6 +41,14 @@ fun HomeScreen(viewModel: MainViewModel) {
     val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
     val masteredCards = allFlashcards.count { it.isMastered }
 
+    // ⚡ Bolt Performance Optimization:
+    // Pre-calculate chapters grouped by subject outside of the rendering loop.
+    // This turns an O(N) filter per subject into an O(1) map lookup during recomposition
+    // inside the LazyColumn's items block.
+    val chaptersBySubject = remember(allChapters) {
+        allChapters.groupBy { it.subjectCode }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -314,7 +322,7 @@ fun HomeScreen(viewModel: MainViewModel) {
         }
 
         items(SubjectType.entries) { subject ->
-            val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
+            val subjectChapters = chaptersBySubject[subject.code] ?: emptyList()
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()
             } else 0
