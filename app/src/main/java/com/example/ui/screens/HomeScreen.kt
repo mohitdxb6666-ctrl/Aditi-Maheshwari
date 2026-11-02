@@ -37,9 +37,14 @@ fun HomeScreen(viewModel: MainViewModel) {
     val allTests by viewModel.allTestResults.collectAsState()
 
     val totalChapters = allChapters.size
-    val completedChapters = allChapters.count { it.masteryPercentage >= 75 }
-    val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
-    val masteredCards = allFlashcards.count { it.isMastered }
+
+    // ⚡ Bolt: Memoize expensive O(N) counts and filters to avoid recalculating on every recomposition
+    val completedChapters = remember(allChapters) { allChapters.count { it.masteryPercentage >= 75 } }
+    val weakChapters = remember(allChapters) { allChapters.filter { it.masteryPercentage < 65 } }
+    val masteredCards = remember(allFlashcards) { allFlashcards.count { it.isMastered } }
+
+    // ⚡ Bolt: Pre-calculate subjects map to turn O(N) filter into O(1) lookup inside rendering loop
+    val chaptersBySubject = remember(allChapters) { allChapters.groupBy { it.subjectCode } }
 
     LazyColumn(
         modifier = Modifier
@@ -314,7 +319,8 @@ fun HomeScreen(viewModel: MainViewModel) {
         }
 
         items(SubjectType.entries) { subject ->
-            val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
+            // ⚡ Bolt: Using pre-calculated O(1) map lookup instead of O(N) filter
+            val subjectChapters = chaptersBySubject[subject.code] ?: emptyList()
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()
             } else 0
