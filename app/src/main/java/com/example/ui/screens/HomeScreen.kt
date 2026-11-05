@@ -36,6 +36,7 @@ fun HomeScreen(viewModel: MainViewModel) {
     val allFlashcards by viewModel.allFlashcards.collectAsState()
     val allTests by viewModel.allTestResults.collectAsState()
 
+    val chaptersBySubject = remember(allChapters) { allChapters.groupBy { it.subjectCode } }
     val totalChapters = allChapters.size
     val completedChapters = allChapters.count { it.masteryPercentage >= 75 }
     val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
@@ -314,7 +315,7 @@ fun HomeScreen(viewModel: MainViewModel) {
         }
 
         items(SubjectType.entries) { subject ->
-            val subjectChapters = allChapters.filter { it.subjectCode == subject.code }
+            val subjectChapters = chaptersBySubject[subject.code] ?: emptyList()
             val subjectMastery = if (subjectChapters.isNotEmpty()) {
                 subjectChapters.map { it.masteryPercentage }.average().toInt()
             } else 0
