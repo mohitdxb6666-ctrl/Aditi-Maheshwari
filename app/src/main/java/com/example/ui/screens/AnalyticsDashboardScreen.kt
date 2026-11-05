@@ -37,6 +37,7 @@ fun AnalyticsDashboardScreen(viewModel: MainViewModel) {
     val allTests by viewModel.allTestResults.collectAsState()
     val allSessions by viewModel.allStudySessions.collectAsState()
 
+    val chaptersBySubject = remember(allChapters) { allChapters.groupBy { it.subjectCode } }
     val totalStudyMinutes = allSessions.sumOf { it.durationMinutes }
     val avgMastery = if (allChapters.isNotEmpty()) allChapters.map { it.masteryPercentage }.average().toInt() else 0
     val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
@@ -226,7 +227,7 @@ fun AnalyticsDashboardScreen(viewModel: MainViewModel) {
                         Text("Subject-by-Subject Mastery", fontWeight = FontWeight.Bold, fontSize = 15.sp)
 
                         SubjectType.entries.forEach { sub ->
-                            val subChs = allChapters.filter { it.subjectCode == sub.code }
+                            val subChs = chaptersBySubject[sub.code] ?: emptyList()
                             val subMastery = if (subChs.isNotEmpty()) subChs.map { it.masteryPercentage }.average().toInt() else 0
                             val subColor = Color(sub.colorHex)
 
