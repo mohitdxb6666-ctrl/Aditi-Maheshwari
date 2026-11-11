@@ -42,6 +42,9 @@ fun AnalyticsDashboardScreen(viewModel: MainViewModel) {
     val weakChapters = allChapters.filter { it.masteryPercentage < 65 }
     val strongChapters = allChapters.filter { it.masteryPercentage >= 80 }
 
+    // Optimization: Group chapters by subject once outside the rendering loop
+    val chaptersBySubject = remember(allChapters) { allChapters.groupBy { it.subjectCode } }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -226,7 +229,7 @@ fun AnalyticsDashboardScreen(viewModel: MainViewModel) {
                         Text("Subject-by-Subject Mastery", fontWeight = FontWeight.Bold, fontSize = 15.sp)
 
                         SubjectType.entries.forEach { sub ->
-                            val subChs = allChapters.filter { it.subjectCode == sub.code }
+                            val subChs = chaptersBySubject[sub.code] ?: emptyList()
                             val subMastery = if (subChs.isNotEmpty()) subChs.map { it.masteryPercentage }.average().toInt() else 0
                             val subColor = Color(sub.colorHex)
 
